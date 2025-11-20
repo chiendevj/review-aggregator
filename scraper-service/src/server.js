@@ -1,33 +1,12 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import { mockReviews } from "./mock-review.js";
+const express = require("express");
+const dotenv = require("dotenv");
+const { mockReviews } = require("./mock-review.js");
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
 app.use(express.json());
-
-// Request logging
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  next();
-});
-
-/**
- * Health check endpoint
- */
-app.get("/health", (req, res) => {
-  res.json({
-    status: "healthy",
-    service: "review-scraper",
-    version: "1.0.0",
-    timestamp: new Date().toISOString(),
-  });
-});
 
 /**
  * GET /api/scrape/reviews/:productId
@@ -39,12 +18,10 @@ app.get("/health", (req, res) => {
  */
 app.get("/api/scrape/reviews/:productId", async (req, res) => {
   const { productId } = req.params;
-  const { source, delay = 500 } = req.query;
+  const { source, delay = 3000 } = req.query;
 
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, parseInt(delay)));
 
-  // Get reviews for product
   const productReviews = mockReviews[productId];
 
   if (!productReviews) {
@@ -55,12 +32,10 @@ app.get("/api/scrape/reviews/:productId", async (req, res) => {
     });
   }
 
-  // Filter by source if specified
   let reviews = [];
   if (source) {
     const sourceLower = source.toLowerCase();
     reviews = productReviews[sourceLower] || [];
-
     if (reviews.length === 0) {
       return res.status(404).json({
         error: "Source not found",
@@ -69,11 +44,9 @@ app.get("/api/scrape/reviews/:productId", async (req, res) => {
       });
     }
   } else {
-    // Combine all sources
     reviews = Object.values(productReviews).flat();
   }
 
-  // Add metadata
   res.json({
     product_id: productId,
     source: source || "all",
@@ -169,10 +142,5 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🔍 Review Scraper Service running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(
-    `📦 Available products: http://localhost:${PORT}/api/scrape/products`
-  );
-  console.log(`🎯 Mock mode: Returns simulated review data for teaching`);
+  console.log(`Scraper service running on http://localhost:${PORT}`);
 });

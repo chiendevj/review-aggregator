@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "reviews",
     }
   );
-
+  Review.associate = (models) => {
+    Review.belongsTo(models.Product, {
+      foreignKey: "product_id",
+      as: "product",
+    });
+  };
   return Review;
 };

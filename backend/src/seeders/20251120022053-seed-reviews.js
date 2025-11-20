@@ -4,7 +4,7 @@ const generateReviewId = (source, num) =>
   `${source.toUpperCase()}_${String(num).padStart(4, "0")}`;
 const formatDate = (iso) => iso.replace("T", " ").replace("Z", "");
 const mockReviews = {
-  // Product 1: USB-C Fast Charger 30W
+  // Product 1: Anker Nano USB C Charger Block...
   1: {
     amazon: [
       {
@@ -124,7 +124,7 @@ const mockReviews = {
     ],
   },
 
-  // Product 2: Wireless Bluetooth Headphones
+  // Product 2: JBL Tune 720BT - Wireless Over-Ear...
   2: {
     amazon: [
       {
@@ -214,7 +214,7 @@ const mockReviews = {
     ],
   },
 
-  // Product 3: Smart LED Light Bulb
+  // Product 3: Govee Smart Light Bulbs...
   3: {
     amazon: [
       {
