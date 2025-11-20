@@ -1,6 +1,6 @@
-import pool from "../configs/db.js";
+const pool =require("@configs/db");
 
-export const ExampleRepository = {
+const ExampleRepository = {
   getCurrentTime: async () => {
     const [rows] = await pool.query("SELECT NOW() as time");
     return rows[0];
@@ -10,3 +10,4 @@ export const ExampleRepository = {
     return rows;
   },
 };
+module.exports = ExampleRepository;

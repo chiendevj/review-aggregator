@@ -1,5 +1,5 @@
-import express from "express";
-import { ExampleService } from "../services/example.service.js";
+const express = require("express");
+const ExampleService = require("@services/example.service.js");
 
 const router = express.Router();
 
@@ -25,4 +25,4 @@ router.get("/users", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

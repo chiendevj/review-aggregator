@@ -1,6 +1,6 @@
-import { ExampleRepository } from "../repositories/example.repository.js";
+const  ExampleRepository = require("@repositories/example.repository.js");
 
-export const ExampleService = {
+const ExampleService = {
   getServerTime: async () => {
     const result = await ExampleRepository.getCurrentTime();
     return result.time;
@@ -9,3 +9,4 @@ export const ExampleService = {
     return await ExampleRepository.getAllUsers();
   },
 };
+module.exports = ExampleService;
