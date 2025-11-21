@@ -1,7 +1,7 @@
 const ProductRepository = require("@repositories/product.repository.js");
 
 const ProductService = {
-  getByKeyword: async (keyword, page = 1, limit = 10) => {
+  getByKeyword: async (keyword, page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
 
     if (keyword && keyword.trim() !== "") {
