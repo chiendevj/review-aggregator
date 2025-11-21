@@ -11,12 +11,12 @@ const db = {};
 
 // Initialize Sequelize instance
 const sequelize = new Sequelize(
-  config.database.name,
-  config.database.username,
-  config.database.password,
+  config.development.database,
+  config.development.username,
+  config.development.password,
   {
-    host: config.database.host,
-    dialect: config.database.dialect,
+    host: config.development.host,
+    dialect: config.development.dialect,
     logging: false,
   }
 );
