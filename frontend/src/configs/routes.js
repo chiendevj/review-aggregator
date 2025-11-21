@@ -7,7 +7,7 @@ export const publicRoutes = [
     element: HomePage,
   },
   {
-    path: "/detail",
+    path: "/product/:id",
     element: DetailPage,
   },
 ];

@@ -20,62 +20,58 @@ const ReviewService = {
     };
   },
 
-  getByProductId: async (product_id, page = 1, limit = 10) => {
+  getByProductId: async (product_id, page = 1, limit = 10, source = 'All', sortBy = 'newest') => {
     const product = await ProductRepository.findByProductId(product_id);
     if (!product) throw new Error("Product not found");
 
+    const totalReviewsInDb = await ReviewRepository.countAllByProductId(product_id);
+
+    if (totalReviewsInDb === 0) {
+        const url = `${config.scraper.baseUrl}/api/scrape/reviews/${product_id}`;
+        let scrapedReviews = [];
+
+        try {
+            const response = await axios.get(url);
+            scrapedReviews = response.data.data || [];
+        } catch (err) {
+            console.error("Scraper Error:", err.message);
+        }
+
+        if (scrapedReviews.length > 0) {
+            try {
+                await ReviewRepository.bulkInsert(scrapedReviews);
+            } catch (err) {
+                throw new Error("Database Insert Error");
+            }
+        }
+        if (scrapedReviews.length === 0) {
+             return {
+                data: [],
+                meta: { total: 0, page, totalPages: 0 }
+            };
+        }
+    }
+
     const offset = (page - 1) * limit;
+    
     const { count, rows } = await ReviewRepository.findByProductPaginated(
-      product_id,
-      limit,
-      offset
-    );
-
-    if (count > 0) {
-      return {
-        reviews: rows,
-        meta: {
-          total: count,
-          page,
-          totalPages: Math.ceil(count / limit),
-        },
-      };
-    }
-    const url = `${config.scraper.baseUrl}/api/scrape/reviews/${product_id}`;    
-    let scrapedReviews = [];
-
-    try {
-      const response = await axios.get(url);
-      scrapedReviews = response.data.data || [];      
-    } catch (err) {
-      throw new Error("Server Error");
-    }
-
-    if (scrapedReviews.length === 0) {
-      throw new Error("No reviews found");
-    }
-
-    try {
-      await ReviewRepository.bulkInsert(scrapedReviews);      
-    } catch (err) {
-      throw new Error("Server Error");
-    }
-
-    const final = await ReviewRepository.findByProductPaginated(
-      product_id,
-      limit,
-      offset
+        product_id,
+        limit,
+        offset,
+        source, 
+        sortBy
     );
 
     return {
-      data: final.rows,
-      meta: {
-        total: final.count,
-        page,
-        lastPage: Math.ceil(final.count / limit),
-      },
+        data: rows,
+        meta: {
+            total: count,
+            page: Number(page),
+            limit: Number(limit),
+            totalPages: Math.ceil(count / limit),
+        },
     };
-  },
+},
 
   getById: async (id) => {
     const review = await ReviewRepository.findById(id);

@@ -4,7 +4,7 @@ const { mockReviews } = require("./mock-review.js");
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3001;
+const SERVICE_PORT = process.env.SERVICE_PORT || 4000;
 
 app.use(express.json());
 
@@ -141,6 +141,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Scraper service running on http://localhost:${PORT}`);
+app.listen(SERVICE_PORT, "0.0.0.0", () => {
+  console.log(`Scraper service running on http://localhost:${SERVICE_PORT}`);
 });
